@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -17,12 +18,18 @@ import tacos.model.TacoOrder;
 
 @Controller
 @RequestMapping("/design")
-@SessionAttributes("tacoOrder")
+@SessionAttributes("order")
 public class DesignTacoController {
 
 	@GetMapping
 	public String showDesignForm() {
 		return "design";
+	}
+	
+	@PostMapping
+	public String processTaco(Taco taco, @ModelAttribute(name = "order") TacoOrder order) {
+		order.addTaco(taco);
+		return "redirect:/orders/current";
 	}
 	
 	@ModelAttribute
