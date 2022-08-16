@@ -1,6 +1,7 @@
 package tacos.model;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,8 @@ public class TacoOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private long id;
+    
     @NotBlank(message="Delivery name is required")
     private String deliveryName;
     
@@ -39,6 +42,8 @@ public class TacoOrder implements Serializable {
     private String ccCVV;
     
     private List<Taco> tacos = new ArrayList<>();
+    
+    private Instant placedAt;
     
     public void addTaco(Taco taco) {
     	this.tacos.add(taco);
@@ -114,6 +119,22 @@ public class TacoOrder implements Serializable {
 
 	public void setTacos(List<Taco> tacos) {
 		this.tacos = tacos;
+	}
+
+	public Instant getPlacedAt() {
+		return placedAt;
+	}
+
+	public void setPlacedAt(Instant placedAt) {
+		this.placedAt = placedAt;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 }

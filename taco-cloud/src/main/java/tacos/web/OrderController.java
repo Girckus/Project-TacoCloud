@@ -12,12 +12,19 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import tacos.model.TacoOrder;
+import tacos.repository.jdbc.JdbcOrderRepository;
 
 @Controller
 @RequestMapping("/orders")
 @SessionAttributes("order")
 public class OrderController {
 
+	private JdbcOrderRepository orderRepo;
+	
+	public OrderController(JdbcOrderRepository orderRepo) {
+		this.orderRepo = orderRepo;
+	}
+	
 	@GetMapping("/current")
 	public String orderForm() {
 		return "orderForm";
@@ -29,6 +36,7 @@ public class OrderController {
 			return "orderForm";
 		}
 
+		orderRepo.save(order);
 		sessionStatus.setComplete();
 		return "redirect:/";
 	}
