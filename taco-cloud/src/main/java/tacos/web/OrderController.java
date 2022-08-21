@@ -11,17 +11,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import tacos.model.Taco;
 import tacos.model.TacoOrder;
-import tacos.repository.jdbc.JdbcOrderRepository;
+import tacos.repository.OrderRepository;
 
 @Controller
 @RequestMapping("/orders")
 @SessionAttributes("order")
 public class OrderController {
 
-	private JdbcOrderRepository orderRepo;
+	private OrderRepository orderRepo;
 	
-	public OrderController(JdbcOrderRepository orderRepo) {
+	public OrderController(OrderRepository orderRepo) {
 		this.orderRepo = orderRepo;
 	}
 	
@@ -36,8 +37,13 @@ public class OrderController {
 			return "orderForm";
 		}
 
+		for(Taco taco : order.getTacos()) {
+			taco.setTacoOrder(order);
+		}
+		
 		orderRepo.save(order);
 		sessionStatus.setComplete();
+		
 		return "redirect:/";
 	}
 	

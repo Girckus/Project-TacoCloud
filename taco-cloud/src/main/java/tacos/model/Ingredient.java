@@ -2,16 +2,27 @@ package tacos.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+
+@Entity
 public class Ingredient implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-	private final String id;
+    @Id
+	private String id;
 	private String name;
+	
+	@Enumerated(EnumType.STRING)
 	private Type type;
 	
 	public static enum Type { WRAP, PROTEIN, VEGGIES, CHEESE, SAUCE }
 
+	public Ingredient() {}
+	
 	public Ingredient( String id, String name, Type type) {
 		this.id = id;
 		this.name = name;

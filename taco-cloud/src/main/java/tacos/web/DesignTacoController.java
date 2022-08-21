@@ -1,5 +1,6 @@
 package tacos.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,18 +17,18 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import tacos.model.Ingredient;
 import tacos.model.Ingredient.Type;
+import tacos.repository.IngredientRepository;
 import tacos.model.Taco;
 import tacos.model.TacoOrder;
-import tacos.repository.jdbc.JdbcIngredientRepository;
 
 @Controller
 @RequestMapping("/design")
 @SessionAttributes("order")
 public class DesignTacoController {
 
-	private final JdbcIngredientRepository ingredientRepo;
+	private final IngredientRepository ingredientRepo;
 	
-	public DesignTacoController(JdbcIngredientRepository ingredientRepo) {
+	public DesignTacoController(IngredientRepository ingredientRepo) {
 		this.ingredientRepo = ingredientRepo;
 	}
 	
@@ -48,7 +49,8 @@ public class DesignTacoController {
 	
 	@ModelAttribute
 	public void addIngredientsToModel(Model model) {
-		List<Ingredient> ingredients = ingredientRepo.findAll();
+		List<Ingredient> ingredients = new ArrayList<>();
+		ingredientRepo.findAll().forEach(ingredients::add);
 		
 		Type[] types = Ingredient.Type.values();
 		for (Type type : types) {

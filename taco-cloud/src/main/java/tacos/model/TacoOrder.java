@@ -5,16 +5,28 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.CreditCardNumber;
 
+@Entity
 public class TacoOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     
     @NotBlank(message="Delivery name is required")
@@ -39,16 +51,19 @@ public class TacoOrder implements Serializable {
     private String ccExpiration;
     
     @Digits(integer=3, fraction=0, message="Invalid CVV")
+    @Column(name = "cc_cvv")
     private String ccCVV;
     
-    private List<Taco> tacos = new ArrayList<>();
-    
     private Instant placedAt;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "taco_order")
+    private List<Taco> tacos = new ArrayList<>();
     
     public void addTaco(Taco taco) {
     	this.tacos.add(taco);
     }
-
+    
 	public String getDeliveryName() {
 		return deliveryName;
 	}
@@ -129,6 +144,11 @@ public class TacoOrder implements Serializable {
 		this.placedAt = placedAt;
 	}
 
+	@PrePersist
+	void placedAt() {
+		this.placedAt = Instant.now();
+	}
+	
 	public long getId() {
 		return id;
 	}
