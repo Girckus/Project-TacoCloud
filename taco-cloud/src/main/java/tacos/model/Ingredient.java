@@ -2,21 +2,17 @@ package tacos.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.mapping.Table;
 
-@Entity
+@Table("ingredients")
 public class Ingredient implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-    @Id
+	@PrimaryKey
 	private String id;
 	private String name;
-	
-	@Enumerated(EnumType.STRING)
 	private Type type;
 	
 	public static enum Type { WRAP, PROTEIN, VEGGIES, CHEESE, SAUCE }

@@ -3,41 +3,43 @@ package tacos.model;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Entity
+import org.springframework.data.cassandra.core.cql.Ordering;
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
+import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
+import org.springframework.data.cassandra.core.mapping.Table;
+
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+
+import tacos.TacoUDRUtils;
+
+@Table("tacos")
 public class Taco  implements Serializable {
 
     private static final long serialVersionUID = 1L;
 	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+    @PrimaryKeyColumn(type=PrimaryKeyType.PARTITIONED)
+    private UUID id = Uuids.timeBased();
 	
 	@NotNull
 	@Size(min=5, message="Name must be at least 5 characters long")
 	private String name;
 	
 	@Size(min=1, message="You must choose at least 1 ingredient")
-	@ManyToMany(targetEntity = Ingredient.class)
-	private List<Ingredient> ingredients;
+	@Column("ingredients")
+	private List<IngredientUDT> ingredients;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "taco_order")
-	private TacoOrder tacoOrder;
-	
+	@PrimaryKeyColumn(type=PrimaryKeyType.CLUSTERED, ordering=Ordering.DESCENDING)
 	private Instant createdAt;
+
+	public void addIngredient(Ingredient ingredient) {
+		this.ingredients.add(TacoUDRUtils.toIngredientUDT(ingredient));
+	}
 	
 	public String getName() {
 		return name;
@@ -46,12 +48,12 @@ public class Taco  implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public List<Ingredient> getIngredients() {
+	
+	public List<IngredientUDT> getIngredients() {
 		return ingredients;
 	}
 
-	public void setIngredients(List<Ingredient> ingredients) {
+	public void setIngredients(List<IngredientUDT> ingredients) {
 		this.ingredients = ingredients;
 	}
 	
@@ -63,25 +65,8 @@ public class Taco  implements Serializable {
 		this.createdAt = createdAt;
 	}
 
-	@PrePersist
 	public void createdAt() {
 		this.createdAt = Instant.now();
 	}
 	
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public TacoOrder getTacoOrder() {
-		return tacoOrder;
-	}
-
-	public void setTacoOrder(TacoOrder tacoOrder) {
-		this.tacoOrder = tacoOrder;
-	}
-
 }

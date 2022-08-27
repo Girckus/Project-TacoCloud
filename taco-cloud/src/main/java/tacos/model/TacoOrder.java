@@ -4,30 +4,26 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.CreditCardNumber;
+import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.mapping.Table;
 
-@Entity
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+
+@Table("orders")
 public class TacoOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @PrimaryKey
+    private UUID id = Uuids.timeBased();
     
     @NotBlank(message="Delivery name is required")
     private String deliveryName;
@@ -51,16 +47,14 @@ public class TacoOrder implements Serializable {
     private String ccExpiration;
     
     @Digits(integer=3, fraction=0, message="Invalid CVV")
-    @Column(name = "cc_cvv")
     private String ccCVV;
     
     private Instant placedAt;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "taco_order")
-    private List<Taco> tacos = new ArrayList<>();
+    @Column("tacos")
+    private List<TacoUDT> tacos = new ArrayList<>();
     
-    public void addTaco(Taco taco) {
+    public void addTaco(TacoUDT taco) {
     	this.tacos.add(taco);
     }
     
@@ -128,11 +122,11 @@ public class TacoOrder implements Serializable {
 		this.ccCVV = ccCVV;
 	}
 
-	public List<Taco> getTacos() {
+	public List<TacoUDT> getTacos() {
 		return tacos;
 	}
 
-	public void setTacos(List<Taco> tacos) {
+	public void setTacos(List<TacoUDT> tacos) {
 		this.tacos = tacos;
 	}
 
@@ -144,17 +138,8 @@ public class TacoOrder implements Serializable {
 		this.placedAt = placedAt;
 	}
 
-	@PrePersist
 	void placedAt() {
 		this.placedAt = Instant.now();
-	}
-	
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 }

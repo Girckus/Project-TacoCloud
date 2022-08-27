@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import tacos.model.Ingredient;
 import tacos.model.Ingredient.Type;
-import tacos.repository.IngredientRepository;
 import tacos.model.Taco;
 import tacos.model.TacoOrder;
+import tacos.model.TacoUDT;
+import tacos.repository.IngredientRepository;
 
 @Controller
 @RequestMapping("/design")
@@ -43,7 +44,7 @@ public class DesignTacoController {
 			return "design";
 		}
 		
-		order.addTaco(taco);
+		order.addTaco(new TacoUDT(taco.getName(), taco.getIngredients()));
 		return "redirect:/orders/current";
 	}
 	

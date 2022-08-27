@@ -37,10 +37,6 @@ public class OrderController {
 			return "orderForm";
 		}
 
-		for(Taco taco : order.getTacos()) {
-			taco.setTacoOrder(order);
-		}
-		
 		orderRepo.save(order);
 		sessionStatus.setComplete();
 		
