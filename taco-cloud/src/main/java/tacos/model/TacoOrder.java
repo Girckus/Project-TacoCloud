@@ -4,26 +4,22 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.CreditCardNumber;
-import org.springframework.data.cassandra.core.mapping.Column;
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.datastax.oss.driver.api.core.uuid.Uuids;
-
-@Table("orders")
+@Document
 public class TacoOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @PrimaryKey
-    private UUID id = Uuids.timeBased();
+    @Id
+    private String id;
     
     @NotBlank(message="Delivery name is required")
     private String deliveryName;
@@ -51,10 +47,9 @@ public class TacoOrder implements Serializable {
     
     private Instant placedAt;
 
-    @Column("tacos")
-    private List<TacoUDT> tacos = new ArrayList<>();
+    private List<Taco> tacos = new ArrayList<>();
     
-    public void addTaco(TacoUDT taco) {
+    public void addTaco(Taco taco) {
     	this.tacos.add(taco);
     }
     
@@ -122,11 +117,11 @@ public class TacoOrder implements Serializable {
 		this.ccCVV = ccCVV;
 	}
 
-	public List<TacoUDT> getTacos() {
+	public List<Taco> getTacos() {
 		return tacos;
 	}
 
-	public void setTacos(List<TacoUDT> tacos) {
+	public void setTacos(List<Taco> tacos) {
 		this.tacos = tacos;
 	}
 

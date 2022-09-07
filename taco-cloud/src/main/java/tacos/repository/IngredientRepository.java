@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import tacos.model.Ingredient;
 
 @Repository
-public interface IngredientRepository extends CrudRepository<Ingredient,String> {
+public interface IngredientRepository extends CrudRepository<Ingredient, String> {
 	
 }

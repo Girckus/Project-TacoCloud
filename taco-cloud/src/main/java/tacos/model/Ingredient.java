@@ -2,15 +2,15 @@ package tacos.model;
 
 import java.io.Serializable;
 
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Table("ingredients")
+@Document(collection="ingredients")
 public class Ingredient implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@PrimaryKey
+	@Id
 	private String id;
 	private String name;
 	private Type type;

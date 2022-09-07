@@ -6,11 +6,10 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import tacos.model.Ingredient;
-import tacos.model.IngredientUDT;
 import tacos.repository.IngredientRepository;
 
 @Component
-public class StringToIngredientConverter  implements Converter<String, IngredientUDT> {
+public class StringToIngredientConverter  implements Converter<String, Ingredient> {
 
 	private IngredientRepository ingredientRepo;
 	
@@ -19,15 +18,9 @@ public class StringToIngredientConverter  implements Converter<String, Ingredien
 	}
 	
 	@Override
-	public IngredientUDT convert(String id) {
+	public Ingredient convert(String id) {
 		Optional<Ingredient> ingredient = ingredientRepo.findById(id);
-	    if (ingredient.isEmpty()) {
-	    	return null;
-	    }
-	    
-	    return ingredient.map(i -> {
-	        return new IngredientUDT(i.getName(), i.getType());
-	    }).get();
+		return ingredient.orElse(null);
 	}
 
 }

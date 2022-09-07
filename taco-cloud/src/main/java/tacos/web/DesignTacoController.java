@@ -19,7 +19,6 @@ import tacos.model.Ingredient;
 import tacos.model.Ingredient.Type;
 import tacos.model.Taco;
 import tacos.model.TacoOrder;
-import tacos.model.TacoUDT;
 import tacos.repository.IngredientRepository;
 
 @Controller
@@ -44,7 +43,7 @@ public class DesignTacoController {
 			return "design";
 		}
 		
-		order.addTaco(new TacoUDT(taco.getName(), taco.getIngredients()));
+		order.addTaco(taco);
 		return "redirect:/orders/current";
 	}
 	
