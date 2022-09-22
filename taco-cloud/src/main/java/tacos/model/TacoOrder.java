@@ -49,6 +49,8 @@ public class TacoOrder implements Serializable {
 
     private List<Taco> tacos = new ArrayList<>();
     
+    private User user;
+    
     public void addTaco(Taco taco) {
     	this.tacos.add(taco);
     }
@@ -135,6 +137,14 @@ public class TacoOrder implements Serializable {
 
 	void placedAt() {
 		this.placedAt = Instant.now();
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }

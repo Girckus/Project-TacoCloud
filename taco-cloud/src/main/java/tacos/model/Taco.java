@@ -32,8 +32,6 @@ public class Taco  implements Serializable {
 		this.ingredients = ingredients;
 	}
 
-
-
 	public String getName() {
 		return name;
 	}
