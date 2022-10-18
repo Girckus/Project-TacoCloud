@@ -1,11 +1,11 @@
 package tacos.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import tacos.model.TacoOrder;
 
 @Repository
-public interface OrderRepository extends CrudRepository<TacoOrder, String> {
+public interface OrderRepository extends PagingAndSortingRepository<TacoOrder, String> {
 	
 }
