@@ -12,8 +12,10 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 @Document
+@RestResource(rel="oders", path="oders")
 public class TacoOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
