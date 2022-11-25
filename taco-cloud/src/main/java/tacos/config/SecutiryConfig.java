@@ -2,6 +2,7 @@ package tacos.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,8 +20,10 @@ public class SecutiryConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http.authorizeRequests()
 						.antMatchers("/design", "/orders").hasRole("USER")
-						.antMatchers("/admin").hasRole("ADMIN")
+						.antMatchers("/admin/**").hasRole("ADMIN")
 						.antMatchers("/", "/**").permitAll()
+						.antMatchers(HttpMethod.POST, "/api/ingredients").hasAuthority("SCOPE_writeIngredients")
+						.antMatchers(HttpMethod.DELETE, "/api//ingredients").hasAuthority("SCOPE_deleteIngredients")
 					.and()
 						.formLogin()
 						.loginPage("/login")
@@ -33,8 +36,9 @@ public class SecutiryConfig {
 						.logout()
 						.logoutSuccessUrl("/")
 					.and()
-						.csrf()
-						.disable()
+					    .csrf().ignoringAntMatchers("/api/tacos/**")
+					.and()
+						.oauth2ResourceServer(oauth2 -> oauth2.jwt())
 					.build();
 	}
 	

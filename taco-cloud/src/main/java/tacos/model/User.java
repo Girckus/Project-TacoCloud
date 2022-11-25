@@ -1,6 +1,10 @@
 package tacos.model;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -9,22 +13,33 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 @Document(collection="users")
-public class User implements UserDetails {
+public class User implements Serializable, UserDetails {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	private String id;
+
+	private String username;
+	private String password;
+	private String fullname;
+	private String street;
+	private String city;
+	private String state;
+	private String zip;
+	private String phoneNumber;
 	
-	private final String username;
-	private final String password;
-	private final String fullname;
-	private final String street;
-	private final String city;
-	private final String state;
-	private final String zip;
-	private final String phoneNumber;
+	public User() {
+		super();
+	}
 	
 	public User(String username, String password, String fullname, String street, String city, String state, String zip, String phoneNumber) {
 		this.username = username;
@@ -37,6 +52,7 @@ public class User implements UserDetails {
 		this.phoneNumber = phoneNumber;
 	}
 
+	@JsonDeserialize(using = CustomAuthorityDeserializer.class)
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		if(username.equals("admin")) {
@@ -44,6 +60,23 @@ public class User implements UserDetails {
 		} else {
 			return List.of(new SimpleGrantedAuthority("ROLE_USER"));
 		}
+	}
+	
+	private static class CustomAuthorityDeserializer extends JsonDeserializer<List<SimpleGrantedAuthority>> {
+	    @Override
+	    public List<SimpleGrantedAuthority> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+	        ObjectMapper mapper = (ObjectMapper) jp.getCodec();
+	        JsonNode jsonNode = mapper.readTree(jp);
+	        List<SimpleGrantedAuthority> grantedAuthorities = new LinkedList<>();
+
+	        Iterator<JsonNode> elements = jsonNode.elements();
+	        while (elements.hasNext()) {
+	            JsonNode next = elements.next();
+	            JsonNode authority = next.get("authority");
+	            grantedAuthorities.add(new SimpleGrantedAuthority(authority.asText()));
+	        }
+	        return grantedAuthorities;
+	    }
 	}
 	
 	@Override
