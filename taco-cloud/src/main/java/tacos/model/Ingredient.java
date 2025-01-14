@@ -2,10 +2,13 @@ package tacos.model;
 
 import java.io.Serializable;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 
-@Document(collection="ingredients")
+
+@Entity
 public class Ingredient implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -13,13 +16,15 @@ public class Ingredient implements Serializable {
 	@Id
 	private String id;
 	private String name;
+	
+	@Enumerated(EnumType.STRING)
 	private Type type;
 	
 	public static enum Type { WRAP, PROTEIN, VEGGIES, CHEESE, SAUCE }
 
 	public Ingredient() {}
 	
-	public Ingredient( String id, String name, Type type) {
+	public Ingredient(String id, String name, Type type) {
 		this.id = id;
 		this.name = name;
 		this.type = type;

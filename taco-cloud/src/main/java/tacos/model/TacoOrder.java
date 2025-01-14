@@ -5,23 +5,29 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.CreditCardNumber;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.rest.core.annotation.RestResource;
 
-@Document
+@Entity
 @RestResource(rel="oders", path="oders")
 public class TacoOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
     @NotBlank(message="Delivery name is required")
     private String deliveryName;
@@ -49,6 +55,8 @@ public class TacoOrder implements Serializable {
     
     private Instant placedAt;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "taco_order")
     private List<Taco> tacos = new ArrayList<>();
     
     private User user;
@@ -149,11 +157,11 @@ public class TacoOrder implements Serializable {
 		this.user = user;
 	}
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

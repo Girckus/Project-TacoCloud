@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import tacos.model.TacoOrder;
 
 @Repository
-public interface OrderRepository extends PagingAndSortingRepository<TacoOrder, String> {
+public interface OrderRepository extends PagingAndSortingRepository<TacoOrder, Long> {
 	
 }
